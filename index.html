@@ -5,8 +5,12 @@
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <title>SPORTIFY TV - Live Sports Streaming</title>
     <meta name="description" content="Watch live sports streaming including Cricket, Football, and major leagues worldwide on SPORTIFY TV.">
+    <!-- SEO & Mobile Optimization -->
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#000000">
+    <link rel="canonical" href="https://sportify-tv.github.io/" />
     
-    <!-- 1. Google Analytics -->
+    <!-- 1. Google Analytics (Already Async - Good) -->
     <script async src='https://www.googletagmanager.com/gtag/js?id=G-QGT6JCVYQS'></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -15,20 +19,27 @@
       gtag('config', 'G-QGT6JCVYQS');
     </script>
 
-    <!-- 2. Security -->
-    <script src='https://cdn.jsdelivr.net/npm/disable-devtool'></script>
+    <!-- 2. Security (Deferred to not block render) -->
+    <script src='https://cdn.jsdelivr.net/npm/disable-devtool' defer></script>
 
-    <!-- FONTS -->
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
-    <link href='https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&amp;display=swap' rel='stylesheet'/>
-    <link href='https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600&amp;display=swap' rel='stylesheet'/>
-    <link href='https://fonts.googleapis.com/css2?family=Permanent+Marker&amp;display=swap' rel='stylesheet'/>
+    <!-- FONTS OPTIMIZATION (Preconnect & Non-blocking) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Non-blocking FontAwesome -->
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet' media="print" onload="this.media='all'"/>
+    <noscript><link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/></noscript>
+    
+    <!-- Google Fonts -->
+    <link href='https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&amp;display=swap' rel='stylesheet' media="print" onload="this.media='all'"/>
+    <link href='https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600&amp;display=swap' rel='stylesheet' media="print" onload="this.media='all'"/>
+    <link href='https://fonts.googleapis.com/css2?family=Permanent+Marker&amp;display=swap' rel='stylesheet' media="print" onload="this.media='all'"/>
 
-    <!-- ARTPLAYER LIBRARIES -->
-    <script src='https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/flv.js/dist/flv.min.js'></script>
+    <!-- ARTPLAYER LIBRARIES (Deferred) -->
+    <script src='https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js' defer></script>
+    <script src='https://cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js' defer></script>
+    <script src='https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js' defer></script>
+    <script src='https://cdn.jsdelivr.net/npm/flv.js/dist/flv.min.js' defer></script>
 
     <style>
       :root {
@@ -614,7 +625,7 @@
            let chanHtml = '';
            if(match.streamLinks && match.streamLinks.length > 0) {
               chanHtml = '<div class="chan-footer">';
-              match.streamLinks.slice(0, 4).forEach(ch => { if(ch.logo) chanHtml += `<img class="chan-img" src="${PROXY_URL}${ch.logo}" onerror="this.style.display='none'"/>`; });
+              match.streamLinks.slice(0, 4).forEach(ch => { if(ch.logo) chanHtml += `<img class="chan-img" src="${PROXY_URL}${ch.logo}" width="28" height="28" loading="lazy" alt="Channel" onerror="this.style.display='none'"/>`; });
               chanHtml += '</div>';
            }
 
@@ -622,13 +633,13 @@
            div.className = `m-card ${status}`;
            div.innerHTML = `
               <div class="mc-header">
-                 <div class="${containerClass}"><img class="mc-league-logo" src="${PROXY_URL}${match.leagueLogo}" onerror="this.style.display='none'"/><span class="${titleClass}">${fullTitle}</span></div>
+                 <div class="${containerClass}"><img class="mc-league-logo" src="${PROXY_URL}${match.leagueLogo}" width="22" height="22" loading="lazy" alt="${match.leagueTitle}" onerror="this.style.display='none'"/><span class="${titleClass}">${fullTitle}</span></div>
                  <span class="mc-timer">${timeDisplay}</span>
               </div>
               <div class="mc-teams">
-                 <div class="mc-team"><img class="mc-logo" src="${PROXY_URL}${match.team1Logo}"/><span class="mc-name">${match.team1Name}</span></div>
+                 <div class="mc-team"><img class="mc-logo" src="${PROXY_URL}${match.team1Logo}" width="45" height="45" loading="lazy" alt="${match.team1Name}"/><span class="mc-name">${match.team1Name}</span></div>
                  <div class="mc-status">${status === 'live' ? '<div class="live-dot-wrap"><div class="blob"></div><span class="live-txt">LIVE</span></div>' : '<span class="vs-txt">VS</span>'}</div>
-                 <div class="mc-team"><img class="mc-logo" src="${PROXY_URL}${match.team2Logo || match.teamZLogo}"/><span class="mc-name">${match.team2Name}</span></div>
+                 <div class="mc-team"><img class="mc-logo" src="${PROXY_URL}${match.team2Logo || match.teamZLogo}" width="45" height="45" loading="lazy" alt="${match.team2Name}"/><span class="mc-name">${match.team2Name}</span></div>
               </div>
               ${chanHtml}
            `;
@@ -694,7 +705,7 @@
                 const cName = ch.name || ch.channel_name || "Unknown"; 
                 const cLogo = ch.logo || '';
                 const country = detectCountry(cName);
-                let logoHtml = cLogo ? `<img src="${PROXY_URL}${cLogo}" class="bc-chan-logo" onerror="this.style.display='none'"/>` : '';
+                let logoHtml = cLogo ? `<img src="${PROXY_URL}${cLogo}" width="25" height="25" loading="lazy" alt="Channel" class="bc-chan-logo" onerror="this.style.display='none'"/>` : '';
                 tableHtml += `<tr><td>${country}</td><td class="chan-cell">${logoHtml} ${cName}</td></tr>`;
              });
              tableHtml += `</table>`;
@@ -724,11 +735,11 @@
 
          content.innerHTML = `
             <div class="dp-match-card">
-               <img class="dp-league-logo-large" src="${PROXY_URL}${match.leagueLogo}" onerror="this.style.display='none'"/>
+               <img class="dp-league-logo-large" src="${PROXY_URL}${match.leagueLogo}" width="100" height="50" loading="lazy" alt="${match.leagueTitle}" onerror="this.style.display='none'"/>
                <div class="dp-teams-row">
-                  <div class="dp-team"><img class="dp-logo" src="${PROXY_URL}${match.team1Logo}"/><span class="dp-name">${match.team1Name}</span></div>
+                  <div class="dp-team"><img class="dp-logo" src="${PROXY_URL}${match.team1Logo}" width="60" height="60" loading="lazy" alt="${match.team1Name}"/><span class="dp-name">${match.team1Name}</span></div>
                   <div class="dp-vs">VS</div>
-                  <div class="dp-team"><img class="dp-logo" src="${PROXY_URL}${match.team2Logo || match.teamZLogo}"/><span class="dp-name">${match.team2Name}</span></div>
+                  <div class="dp-team"><img class="dp-logo" src="${PROXY_URL}${match.team2Logo || match.teamZLogo}" width="60" height="60" loading="lazy" alt="${match.team2Name}"/><span class="dp-name">${match.team2Name}</span></div>
                </div>
                <div class="dp-league-name-btm">${match.leagueTitle}</div>
                <div class="dp-time">${timeStr}</div>
@@ -1124,7 +1135,8 @@
          }
       }
 
-      initApp();
+      // Start App after Load
+      window.addEventListener('load', initApp);
     </script>
   </body>
 </html>
