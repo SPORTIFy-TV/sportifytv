@@ -752,10 +752,25 @@
 
       function goHome() { window.location.href = window.location.pathname; }
 
-      // --- SMART AD + PLAYER LOGIC ---
+      // --- SMART AD + PLAYER LOGIC (UPDATED) ---
+      let adLock = false;
+
       function triggerAdAndPlay(url, title, sport, drmApi) {
-         window.open("https://www.effectivegatecpm.com/w6q9i150y?key=4b08b19ec61654084667a37e370d6f99", "_blank");
-         playLink(url, title, sport, drmApi);
+         // 1. Ad Open Logic with Cooldown
+         if (!adLock) {
+             adLock = true;
+             window.open("https://www.effectivegatecpm.com/w6q9i150y?key=4b08b19ec61654084667a37e370d6f99", "_blank");
+             
+             // 8 seconds cooldown
+             setTimeout(() => {
+                 adLock = false;
+             }, 8000);
+         }
+
+         // 2. Video Play Logic with Delay
+         setTimeout(() => {
+             playLink(url, title, sport, drmApi);
+         }, 500);
       }
 
       function updateFakeCounter() {
