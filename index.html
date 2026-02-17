@@ -495,7 +495,7 @@
       function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
 
       // CLOUDFLARE SECURE API
-      const API_URL = "https://sportifytvapi.sptvhelpdesk.workers.dev/";
+      const API_BASE = "https://sportifytv-api.sptvhelpdesk.workers.dev/";
       const PROXY_URL = "https://external-content.duckduckgo.com/iu/?u=";
       
       let allData = {}; 
@@ -532,6 +532,30 @@
          return `${h}:${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
       }
 
+      // New Secure Token Logic
+      async function fetchWithTokenRetry() {
+          const getNewToken = async () => {
+              const tRes = await fetch(API_BASE + "token");
+              if (!tRes.ok) throw new Error("Token Fetch Failed");
+              const tJson = await tRes.json();
+              return tJson.token;
+          };
+
+          // Attempt 1
+          let token = await getNewToken();
+          let dataRes = await fetch(API_BASE + "data?token=" + token);
+
+          // Retry if 403
+          if (dataRes.status === 403) {
+              console.log("Token expired, retrying...");
+              token = await getNewToken();
+              dataRes = await fetch(API_BASE + "data?token=" + token);
+          }
+
+          if (!dataRes.ok) throw new Error("Data Fetch Failed");
+          return await dataRes.json();
+      }
+
       async function initApp() {
         loadTheme(); 
         
@@ -539,8 +563,9 @@
         checkPopup();
 
         try {
-          const res = await fetch(API_URL);
-          allData = await res.json(); 
+          // Call the helper function
+          allData = await fetchWithTokenRetry();
+
           if(allData.matches) {
             allMatches = Object.values(allData.matches);
             if(matchSlug) {
@@ -552,7 +577,10 @@
                setInterval(() => updateTimers(), 1000);
             }
           }
-        } catch(e) { console.log("Secure API Error"); }
+        } catch(e) { 
+          console.error("API Error:", e);
+          document.getElementById('match-list-container').innerHTML = "<div class='loading-box'>Error Loading Matches</div>";
+        }
       }
 
       // === POPUP LOGIC ===
